@@ -54,7 +54,7 @@ def welcome():
 
 
 @app.route("/api/v1.0/precipitation")
-def names():
+def prcp():
 
     
     results = session.query(Measurement).all()
@@ -71,11 +71,29 @@ def names():
 
     return jsonify(all_measurements)
 
+@app.route("/api/v1.0/stations")
+def stations():
+
+    
+    results = session.query(Station).all()
+    
+    all_stations = []
+    for station in results:
+        station_dict = {}
+        station_dict["id"] = station.id
+        station_dict["station"] = station.station
+        station_dict["name"] = station.name
+        station_dict["latitude"] = station.latitude
+        station_dict["longitude"] = station.longitude
+        station_dict["elevation"] = station.elevation
+        all_stations.append(station_dict)
+
+    return jsonify(all_stations)
+
 
 @app.route("/api/v1.0/stations")
 def passengers():
-    """Return a list of passenger data including the name, age, and sex of each passenger"""
-    # Query all passengers
+    
     results = session.query(Passenger).all()
 
     # Create a dictionary from the row data and append to a list of all_passengers
