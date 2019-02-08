@@ -5,6 +5,7 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 from sqlalchemy import inspect
+import datetime as dt
 
 from flask import Flask, jsonify
 
@@ -89,6 +90,24 @@ def stations():
         all_stations.append(station_dict)
 
     return jsonify(all_stations)
+
+@app.route("/api/v1.0/tobs")
+def tobs():
+
+    
+    results = session.query(Measurement).filter(Measurement.date.between (dt.datetime(max(Measurement.date) + dt.timedelta(-365), dt.datetime(max(Measurement.date)))))
+    
+    all_measurements = []
+    for measurement in results:
+        measurement_dict = {}
+        measurement_dict["id"] = measurement.id
+        measurement_dict["station"] = measurement.station
+        measurement_dict["date"] = measurement.date
+        measurement_dict["prcp"] = measurement.prcp
+        measurement_dict["tobs"] = measurement.tobs
+        all_measurements.append(measurement_dict)
+
+    return jsonify(all_measurements)
 
 
 @app.route("/api/v1.0/stations")
