@@ -93,8 +93,18 @@ def stations():
 
 @app.route("/api/v1.0/tobs")
 def tobs():
+    # #gets latest date
+    # l_date = []
+    # latest_date = session.query(func.max(Measurement.date))
+    
+    # for date in latest_date:
+    #     date_dict = {}
+    #     date_dict['date'] = date
+    #     l_date.append(date_dict)
 
     
+    # return jsonify(l_date)
+
     results = session.query(Measurement).filter(Measurement.date.between (dt.datetime(max(Measurement.date) + dt.timedelta(-365), dt.datetime(max(Measurement.date)))))
     
     all_measurements = []
