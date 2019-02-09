@@ -47,6 +47,12 @@ def get_last_date():
         l_date.append(date_dict)
 
     return l_date[0]['date'][0]
+
+def calc_temps(start_date, end_date):
+
+    return session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+        filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+
 #################################################
 
 #################################################
@@ -118,22 +124,25 @@ def tobs():
 
     return jsonify(all_measurements)
 
+@app.route("/api/v1.0/<start>")
+def start_only(start):
+    x = get_last_date()
+    calculations = calc_temps(start,x)
 
-@app.route("/api/v1.0/stations")
-def passengers():
-    
-    results = session.query(Passenger).all()
+    start_o = list(np.ravel(calculations))
 
-    # Create a dictionary from the row data and append to a list of all_passengers
-    all_passengers = []
-    for passenger in results:
-        passenger_dict = {}
-        passenger_dict["name"] = passenger.name
-        passenger_dict["age"] = passenger.age
-        passenger_dict["sex"] = passenger.sex
-        all_passengers.append(passenger_dict)
 
-    return jsonify(all_passengers)
+    return jsonify(start_o)
+
+
+@app.route("/api/v1.0/<start>/<end>")
+def start_end(start,end):
+    calculations = calc_temps(start,end)
+
+    start_o = list(np.ravel(calculations))
+
+
+    return jsonify(start_o)
 
 
 if __name__ == '__main__':
