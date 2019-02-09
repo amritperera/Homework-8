@@ -112,10 +112,7 @@ def tobs():
     all_measurements = []
     for measurement in results:
         measurement_dict = {}
-        measurement_dict["id"] = measurement.id
-        measurement_dict["station"] = measurement.station
         measurement_dict["date"] = measurement.date
-        measurement_dict["prcp"] = measurement.prcp
         measurement_dict["tobs"] = measurement.tobs
         all_measurements.append(measurement_dict)
 
