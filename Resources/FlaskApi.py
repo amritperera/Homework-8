@@ -34,9 +34,21 @@ session = Session(engine)
 app = Flask(__name__)
 
 #################################################
-def object_as_dict(obj):
-    return {c.key: getattr(obj, c.key)
-            for c in inspect(obj).mapper.column_attrs}
+# Setting up some functions
+#################################################
+#gets latest date
+def get_last_date():
+    l_date = []
+    latest_date = session.query(func.max(Measurement.date))
+
+    for date in latest_date:
+        date_dict = {}
+        date_dict['date'] = date
+        l_date.append(date_dict)
+
+    return l_date[0]['date'][0]
+#################################################
+
 #################################################
 # Flask Routes
 #################################################
@@ -93,19 +105,9 @@ def stations():
 
 @app.route("/api/v1.0/tobs")
 def tobs():
-    # #gets latest date
-    # l_date = []
-    # latest_date = session.query(func.max(Measurement.date))
-    
-    # for date in latest_date:
-    #     date_dict = {}
-    #     date_dict['date'] = date
-    #     l_date.append(date_dict)
+    x = get_last_date()
 
-    
-    # return jsonify(l_date)
-
-    results = session.query(Measurement).filter(Measurement.date.between (dt.datetime(max(Measurement.date) + dt.timedelta(-365), dt.datetime(max(Measurement.date)))))
+    results = session.query(Measurement).filter(Measurement.date.between (dt.datetime.strptime(x,'%Y-%m-%d')+dt.timedelta(-365),dt.datetime.strptime(x,'%Y-%m-%d')))
     
     all_measurements = []
     for measurement in results:
